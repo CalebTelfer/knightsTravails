@@ -41,9 +41,13 @@ class Vertex {
     }
 }
 
+
+
+
+
 class Graph {
     constructor() {
-        this.squares = [];
+        this.squares = new Map(); // key "x,y" value: vertex
     }
 
     populateGraph() {
@@ -51,7 +55,7 @@ class Graph {
             for (let j = 0; j < 8; j++) {
                 let square = new Vertex();
                 square.square = [i,j];
-                this.squares.push(square);
+                this.squares.set(`${i},${j}`, square); //aparrently [i,j] will be a new key every time due to reference. so needs to be a string
             }
         }
     }
@@ -63,7 +67,11 @@ class Graph {
 
             moves.forEach(move => {
                 if (this.isInBounds(move)) {
-                    square.knightEdges.push(move);
+                    const x = move[0];
+                    const y = move[1];
+
+                    const moveVertex = this.squares.get(`${x},${y}`);
+                    square.knightEdges.push(moveVertex);
                 }
             })
 
@@ -82,20 +90,20 @@ class Graph {
     }
 
     possibleMoves(startingPos) {
-        let x = startingPos[0];
-        let y = startingPos[1];
+        let x = startingPos.square[0];
+        let y = startingPos.square[1];
 
         let moves = [];
 
-        returnArray.push([x+2, y+1]);
-        returnArray.push([x+2, y-1]);
-        returnArray.push([x+1, y+2]);
-        returnArray.push([x+1, y-2]);
+        moves.push([x+2, y+1]);
+        moves.push([x+2, y-1]);
+        moves.push([x+1, y+2]);
+        moves.push([x+1, y-2]);
 
-        returnArray.push([x-2, y+1]);
-        returnArray.push([x-2, y-1]);
-        returnArray.push([x-1, y+2]);
-        returnArray.push([x-1, y-2]);
+        moves.push([x-2, y+1]);
+        moves.push([x-2, y-1]);
+        moves.push([x-1, y+2]);
+        moves.push([x-1, y-2]);
 
         return moves;
     }
