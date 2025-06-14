@@ -107,4 +107,66 @@ class Graph {
 
         return moves;
     }
+
+
+    knightMoves(start, end) {
+
+        const startX = start[0];
+        const startY = start[1];
+        const startNode = this.squares.get(`${startX},${startY}`);
+
+        const endX = end[0];
+        const endY = end[1];
+        const endNode = this.squares.get(`${endX},${endY}`);
+
+        let currentNode = startNode;
+        let queue = [];
+        let visitedNodes = [currentNode];
+        let parentMap = new Map();
+        let shortestPath = [];
+    
+
+        // must keep track of path until node is found, then return entirety of path finding.
+        while (currentNode != endNode) {
+            currentNode.knightEdges.forEach(node => {
+                // each adjacent node added to queue to explore. if hasn't been visited
+
+                if(!queue.includes(node) && !visitedNodes.includes(node)) {
+                    queue.push(node);
+                    visitedNodes.push(node);
+                    parentMap.set(node, currentNode);
+                }
+            })
+
+            if (queue.length != 0) {
+                currentNode = queue[0];
+                queue.splice(0, 1);
+            }
+            
+
+            if(currentNode == endNode) {
+                //loop until visited node start -> pos = endNode.
+                let parent = currentNode;
+                shortestPath.unshift(parent.square);
+
+                while (parent != startNode) {
+                    parent = parentMap.get(parent);
+                    shortestPath.unshift(parent.square);
+                }
+            }
+        }
+
+        console.log("The shortest path is...")
+        shortestPath.forEach(node => {
+            console.log(node);
+        })
+    }
 }
+
+
+
+const chessBoard = new Graph();
+
+chessBoard.populateGraph(); // 8x8 board.
+chessBoard.setKnightEdges(); // all knight moves from each square stored an array called knightEdges
+chessBoard.knightMoves([0,0], [7,7]);
